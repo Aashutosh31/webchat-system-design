@@ -1,6 +1,6 @@
 <div align="center">
-  <h1><strong>WebChat Platform Engine</strong></h1>
-  <h2><strong>A multi-paradigm real-time communication platform built with React, Node.js, MongoDB, Redis, Socket.IO, LiveKit, and Docker.</strong></h2>
+  <h1><strong>WebChat</strong></h1>
+  <h2><strong>A multi-paradigm real-time communication social platform built with React, Node.js, MongoDB, Redis, Socket.IO, LiveKit, and Docker.</strong></h2>
 
   <a href="https://webchat.qzz.io" target="_blank">
     <img width="100%" alt="WebChat Live Production Dashboard" src="/assets/webchat-hero.png" />
