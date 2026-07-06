@@ -3,7 +3,7 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,25:132347,50:1a3a8f,75:132347,100:0d1117&height=200&section=header&text=WebChat&fontSize=70&fontColor=22d3ee&fontAlignY=42&animation=fadeIn&desc=REAL-TIME%20SOCIAL%20COMMUNICATION%20PLATFORM&descAlignY=62&descSize=16&descColor=2f81f7" width="100%"/>
 
   <h1><strong>WebChat</strong></h1>
-  <h2><strong>A multi-paradigm real-time communication social platform built with React, Node.js, MongoDB, Redis, Socket.IO, LiveKit, and Docker.</strong></h2>
+  <h2><strong>A multi-paradigm real-time communication social platform built with React, Node.js, TypeScript, MongoDB, Redis, Socket.IO, LiveKit, and Docker.</strong></h2>
 
   <a href="https://webchat.qzz.io" target="_blank">
     <img width="100%" alt="WebChat Live Production Dashboard" src="/assets/webchat-hero.png" />
@@ -92,20 +92,20 @@ The system operates as a distributed monolithic cluster managed under tight infr
 <br/>
 
 ### Frontend System Stack
-* React  Client Engine & Vite Build Automation Framework
-* Zustand Decoupled Client State Stores & Axios Security Interceptors
-* Tailwind CSS Mobile-First Layout Optimization Layer
-* Socket.IO Real-Time Client Protocols & LiveKit Media Core WebRTC Handlers
-* Framer Motion Core Presentation Layer & React Query Server State Synchronization
+* React 19 Client Engine & Vite Build Automation Framework[cite: 21]
+* Zustand Decoupled Client State Stores & Axios Security Interceptors[cite: 21]
+* Tailwind CSS Mobile-First Layout Optimization Layer[cite: 21]
+* Socket.IO Real-Time Client Protocols & LiveKit Media Core WebRTC Handlers[cite: 21]
+* Framer Motion Core Presentation Layer & React Query Server State Synchronization[cite: 21]
 
 ### Backend Core Engine
-* Node.js & Express 5.x REST Route Core Pipeline
-* Socket.IO Clusters using Distributed Redis Sync Adapters
-* MongoDB Atlas Persistence Framework & Mongoose Model Layer
-* Redis Distributed Cache & Shared State Engine Instance Matrices
-* Passport.js Federated Google OAuth 2.0 Identity Protocol Core
+* Node.js & Express 5.x REST Route Core Pipeline[cite: 21]
+* Socket.IO Clusters using Distributed Redis Sync Adapters[cite: 21]
+* MongoDB Atlas Persistence Framework & Mongoose Model Layer[cite: 21]
+* Redis Distributed Cache & Shared State Engine Instance Matrices[cite: 21]
+* Passport.js Federated Google OAuth 2.0 Identity Protocol Core[cite: 21]
 
-<img src="https://capsule-render.vercel.app/api?type=rect&color=0:2f81f7,50:22d3ee,100:6366f1&height=3" width="100%"/>
+---
 
 ## Infrastructure Topography
 
@@ -186,6 +186,4 @@ This software, including all database structure files, underlying source branche
 
 Unauthorized duplication, modification, repository cloning, sub-licensing, distribution, or public replication of any asset in this ecosystem via any medium is strictly prohibited under applicable copyright parameters. For full legal boundaries, refer to the [LICENSE](./LICENSE) document.
 
-<div align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,50:22d3ee,100:2f81f7&height=120&section=footer" width="100%"/>
-</div>
+```
