@@ -111,7 +111,7 @@ Consequences that shape the rest of the design:
                MongoDB Atlas      Redis             Cloudinary      LiveKit
 ```
 
-The app talks to a dedicated backend host (`webchat-mgax.onrender.com`) because the WebView has no reverse proxy in front of it. See [DEPLOYMENT.md](./DEPLOYMENT.md) for the dual-host topology.
+The app talks to a dedicated backend host (for example, `api.example.com`) because the WebView has no reverse proxy in front of it. See [DEPLOYMENT.md](./DEPLOYMENT.md) for the dual-host topology.
 
 ---
 
@@ -215,7 +215,7 @@ Properties:
 
 ## Cookie strategy
 
-Because the bundle runs on `https://localhost` while the API lives on the Render host, every API call is cross-site/third-party. Android WebView blocks third-party cookies by default, which would break the httpOnly session cookies. `MainActivity` explicitly opts in, scoped to the app's own WebView:
+Because the bundle runs on `https://localhost` while the API lives on a separate backend host, every API call is cross-site/third-party. Android WebView blocks third-party cookies by default, which would break the httpOnly session cookies. `MainActivity` explicitly opts in, scoped to the app's own WebView:
 
 ```java
 cookieManager.setAcceptCookie(true);
@@ -229,9 +229,9 @@ cookieManager.setAcceptThirdPartyCookies(getBridge().getWebView(), true);
 The mobile build reads `.env.mobile` via `vite build --mode mobile`. Variables must be absolute URLs (no proxy exists on the device).
 
 ```env
-VITE_API_BASE_URL=https://webchat-mgax.onrender.com/api
-VITE_SOCKET_URL=https://webchat-mgax.onrender.com
-VITE_LIVEKIT_URL=wss://webchat-qqi4ztnq.livekit.cloud
+VITE_API_BASE_URL=https://api.example.com/api
+VITE_SOCKET_URL=https://api.example.com
+VITE_LIVEKIT_URL=wss://livekit.example.com
 ```
 
 `capacitor.config.ts` (head):

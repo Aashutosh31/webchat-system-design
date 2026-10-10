@@ -574,14 +574,14 @@ WebChat runs **two backend instances** of the same codebase, because the website
 Website (webchat.qzz.io)
    │  relative /api  →  Vercel reverse proxy (vercel.json)
    ▼
-Website backend (webchat-yz4f.onrender.com)
+Website backend (https://<website-backend-host>)
    GOOGLE_CALLBACK_URL = https://webchat.qzz.io/api/auth/google/callback
 
 Android app
    │  absolute URLs (no proxy on device)
    ▼
-App backend (webchat-mgax.onrender.com)
-   GOOGLE_CALLBACK_URL = https://webchat-mgax.onrender.com/api/auth/google/callback
+App backend (https://<app-backend-host>)
+   GOOGLE_CALLBACK_URL = https://<app-backend-host>/api/auth/google/callback
 ```
 
 Rules:
@@ -632,8 +632,8 @@ Then:
 The app reads its configuration from `.env.mobile` at build time:
 
 ```env
-VITE_API_BASE_URL=https://webchat-mgax.onrender.com/api
-VITE_SOCKET_URL=https://webchat-mgax.onrender.com
+VITE_API_BASE_URL=https://api.example.com/api
+VITE_SOCKET_URL=https://api.example.com
 VITE_LIVEKIT_URL=wss://<your-livekit-host>
 ```
 
