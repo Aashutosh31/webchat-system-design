@@ -21,6 +21,8 @@ The database stores:
 * Notifications
 * Sessions
 * AI Related Data
+* Trust & Safety
+* Mobile OAuth Exchange
 
 ---
 
@@ -463,6 +465,82 @@ createdAt
 
 ---
 
+# Block
+
+Collection:
+
+```text
+blocks
+```
+
+Purpose:
+
+```text
+Trust & Safety — Bidirectional blocking
+```
+
+Key Fields:
+
+```text
+blocker
+blocked
+createdAt
+```
+
+Index:
+
+```text
+{ blocker, blocked }  unique
+```
+
+A single directional record; enforcement queries check both directions, so a block by either party suppresses DMs, follows, and search/discovery visibility between the two accounts.
+
+---
+
+# Report
+
+Collection:
+
+```text
+reports
+```
+
+Purpose:
+
+```text
+Trust & Safety — Content / user reporting
+```
+
+Key Fields:
+
+```text
+reporter
+targetType
+targetId
+reason
+details
+status
+```
+
+Values:
+
+```text
+targetType: user | post | comment | message | community
+reason:     spam | harassment | hate_speech | violence
+            | nudity | self_harm | misinformation | other
+status:     pending | reviewed | dismissed | actioned
+```
+
+Index:
+
+```text
+{ reporter, targetType, targetId }  unique
+```
+
+One open report per reporter per target, preventing report spam.
+
+---
+
 # Authentication Collections
 
 Authentication is intentionally separated from user profile data.
@@ -541,6 +619,35 @@ ProviderId
 User
 Email
 ```
+
+---
+
+# OAuthExchangeCode
+
+Collection:
+
+```text
+oauthexchangecodes
+```
+
+Purpose:
+
+```text
+Native (Android) OAuth hand-off
+Single-use code redemption
+```
+
+Stores:
+
+```text
+User
+Session
+Token Hash       (the raw code is never stored)
+Expires At       (2-minute TTL)
+Consumed At      (set atomically on redemption)
+```
+
+Redemption is atomic and single-use: the update only matches while `consumedAt` is still null, so concurrent replays cannot both redeem the same code.
 
 ---
 

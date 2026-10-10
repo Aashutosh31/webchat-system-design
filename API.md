@@ -91,10 +91,12 @@ POST /api/auth/login
 
 ```json
 {
-  "email": "user@example.com",
+  "identifier": "user@example.com",
   "password": "password"
 }
 ```
+
+`identifier` accepts an email address or a username.
 
 ### Response
 
@@ -134,6 +136,71 @@ POST /api/auth/refresh
 ```
 
 Refreshes expired access token.
+
+---
+
+## CSRF Token
+
+```http
+GET /api/auth/csrf-token
+```
+
+Issues (and sets as a readable cookie) the synchronizer token that every mutating request must echo back in the `X-CSRF-Token` header. The frontend axios instance bootstraps this automatically.
+
+---
+
+## Socket Token
+
+```http
+GET /api/auth/socket-token
+```
+
+Requires authentication. Returns a short-lived handshake token used to bind a Socket.IO connection to a verified server-side identity.
+
+```json
+{
+  "token": "<short-lived-handshake-token>",
+  "expiresIn": 600
+}
+```
+
+Client-supplied user IDs are ignored during the socket handshake — identity is derived only from this token or the session cookie.
+
+---
+
+## Mobile Session Exchange
+
+```http
+POST /api/auth/mobile/exchange
+```
+
+Redeems the single-use OAuth hand-off code returned to the Android app, and sets the session cookies in the app's own cookie jar.
+
+### Body
+
+```json
+{
+  "code": "<single-use-code>"
+}
+```
+
+---
+
+## Google OAuth (app target)
+
+The native app starts OAuth with a target marker so the callback returns to the app instead of the website:
+
+```http
+GET /api/auth/google?target=app
+```
+
+The callback then redirects to the app's custom scheme with a single-use code:
+
+```text
+io.qzz.webchat://auth/callback?code=<single-use-code>
+```
+
+See [MOBILE.md](./MOBILE.md) for the full hand-off flow.
 
 ---
 
@@ -647,6 +714,173 @@ POST /api/live/token
 ```http
 GET /api/live/rooms
 ```
+
+---
+
+# AI API
+
+Base Route:
+
+```text
+/api/ai
+```
+
+All routes require authentication, a verified account, and are rate limited per user (20 requests / minute).
+
+---
+
+## Suggest Captions
+
+```http
+POST /api/ai/captions
+```
+
+### Body
+
+```json
+{
+  "draft": "sunset at the beach"
+}
+```
+
+### Response
+
+```json
+{
+  "suggestions": ["A caption", "Another caption", "A third caption"]
+}
+```
+
+---
+
+## Suggest Replies
+
+```http
+POST /api/ai/replies
+```
+
+### Body
+
+```json
+{
+  "message": "hey, are you free later?",
+  "history": "Them: hey, are you free later?"
+}
+```
+
+### Response
+
+```json
+{
+  "suggestions": ["Sure!", "I can't right now", "Let me check"]
+}
+```
+
+---
+
+# Moderation API
+
+Base Route:
+
+```text
+/api/moderation
+```
+
+All routes require authentication and a verified account. Mutating routes are additionally covered by the global CSRF check.
+
+---
+
+## List Blocked Users
+
+```http
+GET /api/moderation/blocked
+```
+
+---
+
+## Block User
+
+```http
+POST /api/moderation/block
+```
+
+### Body
+
+```json
+{
+  "userId": "<target-user-id>"
+}
+```
+
+---
+
+## Unblock User
+
+```http
+POST /api/moderation/unblock
+```
+
+### Body
+
+```json
+{
+  "userId": "<target-user-id>"
+}
+```
+
+---
+
+## Create Report
+
+```http
+POST /api/moderation/report
+```
+
+### Body
+
+```json
+{
+  "targetType": "user",
+  "targetId": "<target-id>",
+  "reason": "spam",
+  "details": "optional context"
+}
+```
+
+Supported `targetType` values:
+
+```text
+user
+post
+comment
+message
+community
+```
+
+Supported `reason` values:
+
+```text
+spam
+harassment
+hate_speech
+violence
+nudity
+self_harm
+misinformation
+other
+```
+
+Only one open report per reporter per target is allowed.
+
+---
+
+## Get Reports
+
+```http
+GET /api/moderation/reports
+```
+
+Admin-gated moderation review queue.
 
 ---
 

@@ -458,9 +458,132 @@ Presence Validation
 Controlled Event Access
 ```
 
-Sensitive socket events are associated with verified users.
+## Socket Identity Binding
+
+Socket identity is derived **only** from a short-lived, server-issued handshake token (`GET /api/auth/socket-token`) or the session cookie carried by the WebSocket upgrade.
+
+```text
+Client Identity Claim (query string userId)  →  IGNORED
+Server-issued handshake token / cookie       →  SOURCE OF TRUTH
+```
+
+This closes a spoofing vector where any client could previously register as another user and receive their direct messages.
+
+## Scoped Event Delivery
+
+Direct messages and notifications are delivered to the exact participants of the resource, never broadcast cluster-wide.
+
+```text
+Emit target = [senderId, recipientId]        (DMs)
+Emit target = [recipientId]                  (notifications)
+```
+
+Credentialed socket CORS is restricted to known origins (production web host and the app); wildcard `*.vercel.app` origins are not trusted.
 
 ---
+
+# OAuth State Integrity
+
+The OAuth handshake uses a stateless, tamper-evident `state` parameter.
+
+```text
+state = base64url(payload) + "." + HMAC_SHA256(payload, secret)
+payload = { target: "web" | "app", exp, nonce }
+```
+
+Properties:
+
+```text
+HMAC-signed (no server-side store required)
+Constant-time signature comparison
+Expiry enforced
+Missing / expired / forged state  →  rejected
+```
+
+Rejecting forged callbacks prevents login-CSRF / session-fixation, where an attacker feeds a victim a captured callback and silently signs them into the attacker's account.
+
+The signing key is `JWT_SECRET`; if it is unset the server falls back to a per-process random key rather than a public constant.
+
+---
+
+# Mobile Hand-off Security
+
+Native OAuth never places a token in a URL.
+
+```text
+Browser session cookies (useless to the app)
+        │
+        ▼
+Single-use exchange code  →  custom URL scheme
+        │
+        ▼
+POST /api/auth/mobile/exchange (HTTPS)
+        │
+        ▼
+Session established in the WebView cookie jar
+```
+
+Properties:
+
+```text
+Only a code travels in the redirect — never an access/refresh token
+Code is stored hashed (never plaintext)
+2-minute expiry
+Atomically consumed exactly once (concurrent replay cannot redeem twice)
+Minimum-length validation on the presented code
+```
+
+See [MOBILE.md](./MOBILE.md) for the WebView cookie scoping that makes this work.
+
+---
+
+# Input Validation Hardening
+
+## Regular Expression Safety (ReDoS)
+
+User-supplied search terms are escaped before being interpolated into database regular expressions.
+
+```text
+Input  →  escapeRegex()  →  safe literal pattern
+```
+
+This prevents catastrophic backtracking (a denial-of-service vector) and unintended pattern matching from search input.
+
+## Payload Bounds
+
+```text
+JSON / urlencoded body limit: 10 MB
+AI suggestion input: sanitized, control characters stripped, hard length cap
+```
+
+## Schema Validation
+
+Mutating endpoints validate input against schemas before any controller logic runs.
+
+---
+
+# Trust & Safety Enforcement
+
+```text
+Block (either direction)  →  suppress DM, follow, search, discovery
+Report                    →  deduplicated, queued for admin review
+```
+
+Enforcement is applied server-side, so it cannot be bypassed by a modified client.
+
+---
+
+# Resilience
+
+The backend registers process-level safety nets so a single unexpected rejection or exception is logged rather than silently terminating the service:
+
+```text
+process.on("unhandledRejection")
+process.on("uncaughtException")
+```
+
+---
+
 
 # Media Security
 
@@ -530,11 +653,16 @@ JWT Authentication
 Refresh Token Rotation
 Session Management
 Google OAuth
+Signed OAuth State
 Email Verification
 Password Recovery
-CSRF Protection
+CSRF Protection (global)
 Secure Cookies
 Protected Routes
+Socket Identity Binding
+Single-Use Mobile Exchange Codes
+Input Escaping (ReDoS)
+Trust & Safety Enforcement
 Rate Limiting
 Audit Logging
 Privacy Controls

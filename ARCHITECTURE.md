@@ -17,6 +17,7 @@ WebChat is a full-stack real-time social communication platform that combines:
 * Voice Rooms
 * Notifications
 * AI Infrastructure
+* Android Application
 
 The platform follows a modular monolithic architecture with clear service boundaries and horizontal scaling support.
 
@@ -189,10 +190,16 @@ components/
 hooks/
 lib/
 store/
+types.ts
 
-App.jsx
-main.jsx
+App.tsx
+main.tsx
+
+android/                 Capacitor native project
+capacitor.config.ts
 ```
+
+The same bundle is used by the web deployment and by the bundled Android application (Capacitor WebView). See [MOBILE.md](./MOBILE.md).
 
 ---
 
@@ -548,6 +555,8 @@ AIService
 MemoryService
 AgentWorker
 TaskExecutor
+SuggestionService
+ProviderAbstraction
 ```
 
 Responsibilities:
@@ -557,9 +566,103 @@ Context Assembly
 Memory Retrieval
 Background Tasks
 AI Orchestration
+Composer Suggestions
+Provider Expansion
 ```
 
 The architecture is designed to support future provider expansion without affecting application features.
+
+---
+
+## Composer Suggestions
+
+`SuggestionService` powers two bounded, user-facing affordances:
+
+```text
+Caption Suggestions   → for feed posts and stories
+Smart Replies         → for direct messages
+```
+
+Design constraints:
+
+```text
+No tools, no memory, no conversation state
+Strict JSON contract (array of strings)
+Per-user rate budget
+Input sanitized and length-capped
+Malformed output fails closed to an empty list
+```
+
+This is intentionally separate from the memory-backed `AIService`: suggestion requests are cheap, stateless utility completions.
+
+---
+
+# Trust & Safety Architecture
+
+```text
+User A ──blocks──► User B
+```
+
+Blocks are directional records, but enforcement is bidirectional:
+
+```text
+Block stored as (blocker → blocked)
+        │
+        ▼
+Enforcement checks both directions
+        │
+        ▼
+Suppresses: DMs · Follows · Search · Discovery visibility
+```
+
+Reporting:
+
+```text
+Reporter ──► Report (targetType, targetId, reason, details)
+                 │
+                 ▼
+           Moderation queue (admin-gated)
+```
+
+Properties:
+
+```text
+Fixed target taxonomy: user · post · comment · message · community
+Fixed reason taxonomy: spam · harassment · hate_speech · violence · ...
+One open report per reporter per target (dedup)
+Reports are reviewed and actioned through an admin-gated endpoint
+```
+
+---
+
+# Mobile Client Architecture
+
+The Android client bundles the same React application inside a Capacitor WebView on a local secure origin.
+
+```text
+Android Shell (Capacitor)
+   │
+   ├── custom URL scheme: io.qzz.webchat://auth/callback
+   ├── WebView cookie jar
+   └── native media surfaces (LiveKit)
+        │
+        ▼
+Bundled React bundle  (origin https://localhost)
+        │
+        ▼
+Dedicated Render backend  (HTTPS + WSS)
+```
+
+Key architectural decisions:
+
+```text
+Bundled assets (no server.url)        → guaranteed secure context, no remote code
+Navigation allowlist                   → only known hosts open in-app
+Third-party cookies scoped to WebView → needed for cross-site session cookies
+Native OAuth hand-off                  → Custom Tab + single-use exchange code
+```
+
+Full details are in [MOBILE.md](./MOBILE.md).
 
 ---
 

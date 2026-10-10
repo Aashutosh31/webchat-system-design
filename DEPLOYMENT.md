@@ -566,6 +566,106 @@ Setup Steps:
 
 ---
 
+# Dual-Host Topology (Website + App)
+
+WebChat runs **two backend instances** of the same codebase, because the website and the Android app have different OAuth and transport constraints.
+
+```text
+Website (webchat.qzz.io)
+   │  relative /api  →  Vercel reverse proxy (vercel.json)
+   ▼
+Website backend (webchat-yz4f.onrender.com)
+   GOOGLE_CALLBACK_URL = https://webchat.qzz.io/api/auth/google/callback
+
+Android app
+   │  absolute URLs (no proxy on device)
+   ▼
+App backend (webchat-mgax.onrender.com)
+   GOOGLE_CALLBACK_URL = https://webchat-mgax.onrender.com/api/auth/google/callback
+```
+
+Rules:
+
+```text
+· vercel.json must proxy /api and /health to the WEBSITE backend
+· The app's .env.mobile must point at the APP backend (absolute URLs)
+· Each backend's GOOGLE_CALLBACK_URL must be registered with Google
+· The socket has no proxy — the app must address the backend host directly
+```
+
+> Getting these crossed produces a Google `redirect_uri_mismatch` during sign-in. Always confirm the proxy target matches the registered callback.
+
+---
+
+# Android App Deployment
+
+The Android app is built and released independently of the web deploy.
+
+Build prerequisites:
+
+```text
+JDK 21
+Android SDK (API 36 build tools)
+Release keystore (android/webchat-release.jks + keystore.properties)
+```
+
+Build & publish:
+
+```bash
+cd webchat-frontend
+
+# Signed release APK
+npm run android:release      # → android/app/build/outputs/apk/release/app-release.apk
+
+# Play Store bundle
+npm run android:aab          # → android/app/build/outputs/bundle/release/app-release.aab
+```
+
+Then:
+
+```text
+1. Upload app-release.apk to the GitHub Release as `webchat.apk`.
+2. Bump versionCode in android/app/build.gradle before the next upload.
+3. Update the download links in README.md / MOBILE.md if the asset name changes.
+```
+
+The app reads its configuration from `.env.mobile` at build time:
+
+```env
+VITE_API_BASE_URL=https://webchat-mgax.onrender.com/api
+VITE_SOCKET_URL=https://webchat-mgax.onrender.com
+VITE_LIVEKIT_URL=wss://<your-livekit-host>
+```
+
+See [MOBILE.md](./MOBILE.md) for the full pipeline and security model.
+
+---
+
+# AI & Moderation Configuration
+
+Additional backend environment variables:
+
+```env
+# AI composer suggestions (smart replies / captions)
+GROQ_API_KEY=
+GROQ_MODEL=
+
+# Optional additional AI providers
+MISTRAL_API_KEY=
+MISTRAL_MODEL=
+
+# ARC cognitive layer memory
+PINECONE_API_KEY=
+PINECONE_INDEX=
+
+# Comma-separated user IDs allowed to read the moderation queue
+ADMIN_USER_IDS=
+```
+
+If `ADMIN_USER_IDS` is unset, the moderation review endpoint (`GET /api/moderation/reports`) is not accessible.
+
+---
+
 # Health Checks
 
 Backend:
@@ -760,6 +860,7 @@ Media      → Cloudinary
 Voice      → LiveKit
 OAuth      → Google
 Email      → Google Apps Script Webhook
+Android    → GitHub Releases (signed APK)
 ```
 
 This deployment architecture provides a scalable, production-ready environment for real-time communication, communities, stories, notifications, and voice experiences.

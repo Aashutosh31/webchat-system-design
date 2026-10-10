@@ -33,6 +33,27 @@
 <img src="https://img.shields.io/badge/EPHEMERAL%20STORIES-0d1117?style=for-the-badge&labelColor=0d1117&color=06b6d4" />
 <img src="https://img.shields.io/badge/WEBRTC%20VOICE%2FVIDEO-0d1117?style=for-the-badge&labelColor=0d1117&color=3b82f6" />
 <img src="https://img.shields.io/badge/ARC%20COGNITIVE%20LAYER-0d1117?style=for-the-badge&labelColor=0d1117&color=8b5cf6" />
+<img src="https://img.shields.io/badge/AI%20SUGGESTIONS-0d1117?style=for-the-badge&labelColor=0d1117&color=a855f7" />
+<img src="https://img.shields.io/badge/TRUST%20%26%20SAFETY-0d1117?style=for-the-badge&labelColor=0d1117&color=f43f5e" />
+<img src="https://img.shields.io/badge/ANDROID%20APP-0d1117?style=for-the-badge&labelColor=0d1117&color=3ddc84&logo=android&logoColor=white" />
+
+</div>
+
+## 📲 WebChat for Android
+
+WebChat ships as a **native, installable Android application** — not a mobile web wrapper. The full product (messaging, communities, feed, stories, voice/video, AI) runs inside a hardened Capacitor WebView with a native Google-OAuth hand-off.
+
+<div align="center">
+
+<a href="https://github.com/Aashutosh31/webchat-system-design/releases/download/v1.0.0/webchat.apk">
+  <img src="https://img.shields.io/badge/Download%20APK-WebChat%20v1.0.0-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Download the WebChat Android APK" />
+</a>
+
+**→ [Download `webchat.apk`](https://github.com/Aashutosh31/webchat-system-design/releases/download/v1.0.0/webchat.apk)** · [Release page](https://github.com/Aashutosh31/webchat-system-design/releases/tag/v1.0.0)
+
+`Package: io.qzz.webchat` · `Android 7.0+ (API 24)` · `v1.0.0` · signed release build
+
+Full documentation → **[MOBILE.md](./MOBILE.md)**
 
 </div>
 
@@ -79,6 +100,24 @@ The system operates as a distributed monolithic cluster managed under tight infr
 * **Asynchronous Task Workers**: Decoupled non-blocking execution layers generating channel alerts based on background state shifts.
 * **Co-Project Mapping**: Deep internal service routes built to sync telemetry with the sovereign **ARC-AI** brain framework.
 
+### Composer Intelligence (AI Suggestions)
+* **Smart Replies**: One-tap, context-aware reply suggestions generated from the latest incoming message plus recent chat history.
+* **Caption Suggestions**: Three natural, tone-matched captions for feed posts and stories, generated from the author's draft.
+* **Bounded Utility Generation**: Strict JSON contract, per-user rate budgets, no tools, no memory, no conversation state.
+* **Defensive Parsing**: Malformed or hostile model output fails closed to an empty list instead of throwing.
+
+### Trust & Safety
+* **Bidirectional Blocking**: A block by either party suppresses DMs, follows, and search/discovery visibility between the two accounts.
+* **Structured Reporting**: Report users, posts, comments, messages, or communities across a fixed reason taxonomy.
+* **Deduplicated Reports**: One open report per reporter per target prevents report spam.
+* **Moderation Review Queue**: Admin-gated reporting endpoints for review and action.
+
+### Native Android Application
+* **Installable APK**: Signed release builds distributed directly from GitHub Releases.
+* **Bundled Secure Shell**: Capacitor WebView on a local `https://` origin — no remote code, allowlisted navigation.
+* **Native OAuth Hand-off**: Custom-tab Google sign-in exchanged for a session via a single-use code; no tokens in URLs.
+* **Full Feature Parity**: Messaging, communities, feed, stories, voice/video, AI, and notifications on mobile.
+
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:2f81f7,50:22d3ee,100:6366f1&height=3" width="100%"/>
 
 ## Integrated Architecture Engineering Matrix
@@ -104,6 +143,25 @@ The system operates as a distributed monolithic cluster managed under tight infr
 * MongoDB Atlas Persistence Framework & Mongoose Model Layer[cite: 21]
 * Redis Distributed Cache & Shared State Engine Instance Matrices[cite: 21]
 * Passport.js Federated Google OAuth 2.0 Identity Protocol Core[cite: 21]
+
+### Mobile System Stack
+* Capacitor 8 Native Bridge & Bundled Secure WebView Shell
+* Native Google OAuth Hand-off via Custom Tabs + Single-Use Exchange Codes
+* Scoped Third-Party Cookie Jar & Edge-to-Edge Safe-Area Layout
+* LiveKit Native WebRTC Surfaces for Audio / Video Rooms
+
+---
+
+## Download & Install (Android)
+
+```text
+1. Download the signed APK from the link above.
+2. Allow "Install unknown apps" when prompted.
+3. Open the APK and confirm the install.
+4. Launch WebChat.
+```
+
+Details, build instructions, and the security model are documented in **[MOBILE.md](./MOBILE.md)**.
 
 ---
 
@@ -158,6 +216,8 @@ The application architectural details are divided across standard engineering sp
 * 🔌 **[API.md](./API.md)** — REST endpoints, WebSocket event maps, and transport contract criteria.
 * 🗄️ **[DATABASE.md](./DATABASE.md)** — Mongoose data validation models, strategic indexing boundaries, and mapping arrays.
 * 🛡️ **[SECURITY.md](./SECURITY.md)** — Cryptographic cryptographic paradigms, access gates, and anti-tamper configurations.
+* 📱 **[MOBILE.md](./MOBILE.md)** — Android application, build & release pipeline, native OAuth hand-off, and mobile security model.
+* 🚀 **[DEPLOYMENT.md](./DEPLOYMENT.md)** — Local setup, Docker, production deployment, and the dual-host (web + app) topology.
 
 <img src="https://capsule-render.vercel.app/api?type=rect&color=0:2f81f7,50:22d3ee,100:6366f1&height=3" width="100%"/>
 
