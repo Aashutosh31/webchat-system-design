@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# No private or dynamic paths — this is a single-page marketing site.
+Sitemap: https://webchat-site.vercel.app/sitemap.xml

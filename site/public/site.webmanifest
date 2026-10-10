@@ -1,0 +1,17 @@
+{
+  "name": "WebChat — Real-Time Social Mesh",
+  "short_name": "WebChat",
+  "description": "Messaging, communities, a social feed, ephemeral stories, live voice & video, and an AI composer — in one real-time platform. Available on the web and Android.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "categories": ["social", "communication", "productivity"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
